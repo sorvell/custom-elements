@@ -13,6 +13,10 @@
 const compilerPackage = require('google-closure-compiler');
 const gulp = require('gulp');
 const sourcemaps = require('gulp-sourcemaps');
+const rollup = require('rollup-stream');
+const source = require('vinyl-source-stream');
+const buffer = require('vinyl-buffer');
+const beautify = require('gulp-beautify');
 
 const closureCompiler = compilerPackage.gulp();
 
@@ -31,4 +35,19 @@ gulp.task('default', () => {
         }))
       .pipe(sourcemaps.write('/'))
       .pipe(gulp.dest('./'));
+});
+
+gulp.task('debug', () => {
+  return rollup({
+      entry: './src/custom-elements.js',
+      format: 'iife',
+      sourceMap: false,
+    })
+    .pipe(source('custom-elements.min.js'))
+    .pipe(buffer())
+    .pipe(beautify({
+      indent_size: 2,
+      lookup: false,
+    }))
+    .pipe(gulp.dest('./'));
 });

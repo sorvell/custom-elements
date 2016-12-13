@@ -23,7 +23,11 @@
   "devDependencies": {
     "google-closure-compiler": "^20160822.1.0",
     "gulp": "^3.8.8",
+    "gulp-beautify": "^2.0.1",
     "gulp-sourcemaps": "^1.6.0",
+    "rollup-stream": "^1.14.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
     "web-component-tester": "^4.0.1"
   }
 }

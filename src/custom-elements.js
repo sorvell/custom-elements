@@ -151,9 +151,10 @@ let Deferred;
       this._observers = new Set();
 
       /** @private {!MutationObserver} **/
+
       this._attributeObserver = new MutationObserver(
-        /** @type {function(Array<MutationRecord>, MutationObserver)} */
-        (this._handleAttributeChange.bind(this)));
+        /** @type {function(Array<MutationRecord>, MutationObserver)} **/
+       (this._handleAttributeChange.bind(this)));
 
       /** @private {?HTMLElement} **/
       this._newInstance = null;
@@ -558,7 +559,7 @@ let Deferred;
         // reobserve it.
         // TODO(justinfagnani): can we do this in a microtask so we don't thrash
         // on creating and destroying MutationObservers on batch DOM mutations?
-        this._observeRoot(root);
+        //this._observeRoot(root);
 
         const walker = createTreeWalker(root);
         do {
@@ -595,11 +596,11 @@ let Deferred;
       const observedAttributes = definition.observedAttributes;
       const attributeChangedCallback = definition.attributeChangedCallback;
       if (attributeChangedCallback && observedAttributes.length > 0) {
-        this._attributeObserver.observe(element, {
-          attributes: true,
-          attributeOldValue: true,
-          attributeFilter: observedAttributes,
-        });
+        // this._attributeObserver.observe(element, {
+        //   attributes: true,
+        //   attributeOldValue: true,
+        //   attributeFilter: observedAttributes,
+        // });
 
         // Trigger attributeChangedCallback for existing attributes.
         // https://html.spec.whatwg.org/multipage/scripting.html#upgrades
@@ -674,12 +675,9 @@ let Deferred;
     throw new Error('Unknown constructor. Did you call customElements.define()?');
   }
   win.HTMLElement = newHTMLElement;
-  // By setting the patched HTMLElement's prototype property to the native
-  // HTMLElement's prototype we make sure that:
-  //     document.createElement('a') instanceof HTMLElement
-  // works because instanceof uses HTMLElement.prototype, which is on the
-  // ptototype chain of built-in elements.
-  win.HTMLElement.prototype = origHTMLElement.prototype;
+  win.HTMLElement.prototype = Object.create(origHTMLElement.prototype, {
+    constructor: {value: win.HTMLElement, configurable: true, writable: true},
+  });
 
   // patch doc.createElement
   // TODO(justinfagnani): why is the cast neccessary?
@@ -706,7 +704,7 @@ let Deferred;
     if (definition) {
       customElements._upgradeElement(element, definition, callConstructor);
     }
-    customElements._observeRoot(element);
+    //customElements._observeRoot(element);
     return element;
   };
   doc.createElement = function(tagName, options) {
@@ -740,7 +738,7 @@ let Deferred;
         const root = _origAttachShadow.call(this, options);
         /** @type {CustomElementRegistry} */
         const customElements = _customElements();
-        customElements._observeRoot(root);
+        //customElements._observeRoot(root);
         return root;
       },
     });
